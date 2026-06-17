@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="lo">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Love Tit 💕</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Lao:wght@300;400;600;700&family=Noto+Sans+Lao:wght@300;400;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <div class="stars" id="stars"></div>
+  <div class="hearts-bg" id="heartsContainer"></div>
+  <div id="cursor">💗</div>
+  <div id="toast">💌 ຮັກເຈົ້າຫຼາຍທີ່ສຸດໃນໂລກ! 💌</div>
+
+  <div class="card" id="card">
+    <div class="big-heart" id="bigHeart">💗</div>
+    <h1 class="title">My Love <span class="glow-text">Tithee</span></h1>
+    <p class="subtitle">ຮັກຂອງຂ້ອຍ ✨</p>
+    <div class="divider"></div>
+    <p class="message">
+      ທ່ານຄືດັ່ງດາວດວງທີ່ສວ່າງທີ່ສຸດໃນທ້ອງຟ້າຂອງຂ້ອຍ 🌟<br />
+      ທຸກໆວັນທີ່ມີ <span>Tithee</span> ຢູ່ຂ້າງຂ້ອຍ<br />
+      ຊີວິດຂ້ອຍສົມບູນ ແລະ ມີຄວາມສຸກ 🌸<br /><br />
+      ຂ້ອຍຮັກເຈົ້າຫລາຍກວ່າທີ່ຄໍາເວົ້າຈະອະທິບາຍໄດ້ 💕
+    </p>
+    <div class="petals">🌸 🌹 🌺 🌸</div>
+    <div class="divider"></div>
+    <div class="date-box">💌 Forever &amp; Always 💌</div>
+    <button class="love-btn" id="loveBtn">💝 ສົ່ງຄວາມຮັກ</button>
+  </div>
+
+  <script>
+    // ---- Stars ----
+    const starsEl = document.getElementById('stars');
+    for (let i = 0; i < 130; i++) {
+      const s = document.createElement('div');
+      s.classList.add('star');
+      const sz = Math.random() * 3 + 1;
+      s.style.cssText = `width:${sz}px;height:${sz}px;top:${Math.random()*100}%;left:${Math.random()*100}%;animation-delay:${Math.random()*3}s;animation-duration:${1.5+Math.random()*2}s;`;
+      starsEl.appendChild(s);
+    }
+
+    // ---- Floating hearts ----
+    const hCont = document.getElementById('heartsContainer');
+    const emojis = ['💕','💖','💗','💓','💞','🌸','✨','🌹'];
+    for (let i = 0; i < 20; i++) {
+      const h = document.createElement('div');
+      h.classList.add('float-heart');
+      h.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+      h.style.cssText = `left:${Math.random()*100}%;animation-duration:${6+Math.random()*9}s;animation-delay:${Math.random()*7}s;font-size:${1+Math.random()*1.5}rem;`;
+      hCont.appendChild(h);
+    }
+
+    // ---- Custom cursor ----
+    const cursor = document.getElementById('cursor');
+    const cursorEmojis = ['💗','💖','💕','💓','✨','🌸'];
+    let cursorIdx = 0;
+    document.addEventListener('mousemove', e => {
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top  = e.clientY + 'px';
+
+      // Trail
+      const trail = document.createElement('div');
+      trail.classList.add('trail');
+      trail.textContent = cursorEmojis[Math.floor(Math.random()*cursorEmojis.length)];
+      trail.style.left = e.clientX + 'px';
+      trail.style.top  = e.clientY + 'px';
+      document.body.appendChild(trail);
+      setTimeout(() => trail.remove(), 850);
+    });
+
+    // Rotate cursor emoji every 2s
+    setInterval(() => {
+      cursorIdx = (cursorIdx + 1) % cursorEmojis.length;
+      cursor.textContent = cursorEmojis[cursorIdx];
+    }, 2000);
+
+    // ---- Card 3D tilt on mouse move ----
+    const card = document.getElementById('card');
+    document.addEventListener('mousemove', e => {
+      const rect = card.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top  + rect.height / 2;
+      const dx = (e.clientX - cx) / (window.innerWidth  / 2);
+      const dy = (e.clientY - cy) / (window.innerHeight / 2);
+      card.style.transform = `perspective(900px) rotateY(${dx*8}deg) rotateX(${-dy*8}deg)`;
+    });
+    document.addEventListener('mouseleave', () => {
+      card.style.transform = '';
+    });
+
+    // ---- Click background → ripple + burst ----
+    document.addEventListener('click', e => {
+      if (e.target.closest('#card') || e.target.id === 'loveBtn') return;
+
+      // Ripple
+      const rip = document.createElement('div');
+      rip.classList.add('ripple');
+      rip.style.cssText = `left:${e.clientX}px;top:${e.clientY}px;width:60px;height:60px;`;
+      document.body.appendChild(rip);
+      setTimeout(() => rip.remove(), 750);
+
+      // Burst hearts at click
+      spawnBurst(e.clientX, e.clientY, 8);
+    });
+
+    function spawnBurst(x, y, count) {
+      const burstEmojis = ['💕','💖','💗','💓','💞','✨','🌸'];
+      for (let i = 0; i < count; i++) {
+        const b = document.createElement('div');
+        b.classList.add('burst-heart');
+        b.textContent = burstEmojis[Math.floor(Math.random()*burstEmojis.length)];
+        const angle = (Math.PI * 2 / count) * i + Math.random() * 0.5;
+        const dist  = 60 + Math.random() * 80;
+        const tx2   = Math.cos(angle) * dist + 'px';
+        const ty2   = Math.sin(angle) * dist - 40 + 'px';
+        b.style.cssText = `left:${x}px;top:${y}px;--tx:0;--ty:0;--tx2:${tx2};--ty2:${ty2};animation-delay:${Math.random()*0.15}s;`;
+        document.body.appendChild(b);
+        setTimeout(() => b.remove(), 950);
+      }
+    }
+
+    // ---- Big heart click → mega burst ----
+    const bigHeart = document.getElementById('bigHeart');
+    bigHeart.addEventListener('click', e => {
+      e.stopPropagation();
+      bigHeart.classList.remove('burst-pop');
+      void bigHeart.offsetWidth;
+      bigHeart.classList.add('burst-pop');
+      bigHeart.addEventListener('animationend', () => bigHeart.classList.remove('burst-pop'), { once: true });
+      const rect = bigHeart.getBoundingClientRect();
+      spawnBurst(rect.left + rect.width/2, rect.top + rect.height/2, 16);
+      showToast('💗 ຫົວໃຈຂ້ອຍ ຕີຢູ່ສະເໝີ! 💗');
+    });
+
+    // ---- Love button ----
+    const messages = [
+      '💌 ຮັກເຈົ້າຫຼາຍທີ່ສຸດໃນໂລກ!',
+      '🌸 ເຈົ້າຄືທຸກໆລົມຫາຍໃຈຂ້ອຍ!',
+      '✨ ກັບເຈົ້າ ທຸກວັນຄືເທສະການ!',
+      '💕 Tithee = ຄວາມສຸກຂອງຂ້ອຍ!',
+      '🌹 ຮັກ ຮັກ ຮັກ ເຈົ້ານຳ!',
+    ];
+    let msgIdx = 0;
+    document.getElementById('loveBtn').addEventListener('click', e => {
+      e.stopPropagation();
+      showToast(messages[msgIdx % messages.length]);
+      msgIdx++;
+      const rect = e.target.getBoundingClientRect();
+      spawnBurst(rect.left + rect.width/2, rect.top, 12);
+    });
+
+    // ---- Toast helper ----
+    const toast = document.getElementById('toast');
+    let toastTimer;
+    function showToast(msg) {
+      toast.textContent = msg;
+      toast.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+  </script>
+</body>
+</html>
